@@ -1,8 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 
-namespace vortexUserConfig.UsersConfig.Authentication;
+namespace vortexUserConfig.UsersConfig.Presentation.Services.Authentication;
 
 
 public class PasswordService

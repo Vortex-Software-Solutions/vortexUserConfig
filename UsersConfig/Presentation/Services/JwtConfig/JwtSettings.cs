@@ -1,4 +1,4 @@
-namespace vortexUserConfig.UsersConfig.JwtConfig;
+namespace vortexUserConfig.UsersConfig.Presentation.Services.JwtConfig;
 
 public class JwtSettings
 {

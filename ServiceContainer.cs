@@ -4,14 +4,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using vortexUserConfig.UsersConfig.Presentation.Services.JwtConfig;
 
 
 namespace vortexUserConfig;
 
-public class ServiceContainer 
+public static class ServiceContainer 
 {
     public static IServiceCollection AddVortexUserConfig(this IServiceCollection services, IConfiguration config)
     {
+
+        //Dependency Injection
+        {
+            services.AddScoped<JwtToken>();
+        }
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer("Bearer", options =>

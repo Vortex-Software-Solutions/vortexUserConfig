@@ -3,8 +3,9 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using vortexUserConfig.UsersConfig.Presentation.Common;
 
-namespace vortexUserConfig.UsersConfig.JwtConfig;
+namespace vortexUserConfig.UsersConfig.Presentation.Services.JwtConfig;
 
 public class JwtToken
 {
@@ -23,10 +24,10 @@ public class JwtToken
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.Email, user.email),
-            new Claim(ClaimTypes.Role, user.role.name),
-            new Claim("roleId", user.role.id.ToString()),
-            new Claim("id", user.id.ToString())
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role!.Name),
+            new Claim("roleId", user.Role.Id.ToString()),
+            new Claim("id", user.Id.ToString())
         };
         
         var token = new JwtSecurityToken(

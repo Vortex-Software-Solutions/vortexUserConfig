@@ -9,14 +9,15 @@ Para poder utilizar la libreria es necesario importarla en el archivo de configu
 ### Program.cs
 ```c#
 
-//Esto va en el archivo inyeccion de dependencias
     
+    using Microsoft.Extensions.Options;
     using vortexUserConfig;
-    using vortexUserConfig.Config;    
+    using vortexUserConfig.Config;
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddVortexUserConfig();
+        //Esto va en el archivo inyeccion de dependencias
+        services.AddVortexUserConfig(builder.Configuration);
     
         // Se tiene que elegir entre  Roles, Permission
         ConfigUserInit initUserConfig = new ConfigUserInit { 
@@ -29,4 +30,14 @@ Para poder utilizar la libreria es necesario importarla en el archivo de configu
     }
 ```
 
-## 
+## appsettings.json
+
+``` json
+
+  "Authentication": {
+    "Key": "" , // Agregar la llave del servicio
+    "Issuer": "", //Agregar el issuer
+    "Audience": "" //Agregar la audiencia
+  },
+
+```
