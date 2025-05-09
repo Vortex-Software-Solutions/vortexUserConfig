@@ -1,15 +1,17 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using vortexUserConfig.UsersConfig.Infrastructure;
+using vortexUserConfig.UsersConfig.Infrastructure.Entities;
 
 namespace vortexUserConfig.UsersConfig.Presentation.Common.ValidatePermissions;
 
-public class Permission : Infrastructure.Entities.Permissions
+public class OnePermissionRepository : Infrastructure.Entities.Permissions
 {
     //Values for the constructor
     private readonly UserConfigDbContext _context;
 
     //
-    // Permission class is a heredit this atributes from the UserEntity
+    // OnePermissionRepository class is a heredit this atributes from the UserEntity
     //
     // public Guid Id = Guid.NewGuid();
     // public string Title = "";
@@ -23,7 +25,7 @@ public class Permission : Infrastructure.Entities.Permissions
     // public bool IsDeleted = false;
 
     //Constructor
-    public Permission(UserConfigDbContext context)
+    public OnePermissionRepository(UserConfigDbContext context)
     {
         _context = context;
     }
@@ -67,7 +69,7 @@ public class Permission : Infrastructure.Entities.Permissions
         this.UpdatedAt = DateTime.Now;
     }
     
-    public async Task<Permission> Create(Guid userId, string title, string description)
+    public async Task<OnePermissionRepository> Create(Guid userId, string title, string description)
     {
         InitPermission(userId, title, description);
         
@@ -77,7 +79,7 @@ public class Permission : Infrastructure.Entities.Permissions
         return this;
     }
     
-    public async Task<Permission> GetById(Guid id)
+    public async Task<OnePermissionRepository> GetById(Guid id)
     {
         var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.Id == id);
 
@@ -93,7 +95,26 @@ public class Permission : Infrastructure.Entities.Permissions
         return this;
     }
     
-    public async Task<Permission> ChangeTitle(Guid id, Guid updatedBy, string title, string description)
+    public async Task<OnePermissionRepository> FindBySpecification(Expression<Func<Permissions, bool>> spec)
+    {
+        IQueryable<Permissions> query = _context.Permissions.Where(spec);
+
+        var permission = await query.FirstOrDefaultAsync();
+        
+        if( permission is not null )
+        {        
+            InitPermission(
+                permission.Id, permission.Title, permission.Description,
+                permission. CreatedBy, permission.CreatedAt , permission.UpdatedBy,
+                permission.UpdatedAt , permission.IsDisable , permission.DeletedBy , permission.IsDeleted 
+            );
+        } 
+        
+        return this;
+    }
+
+    
+    public async Task<OnePermissionRepository> ChangeTitle(Guid id, Guid updatedBy, string title, string description)
     {
         this.Title = title;
         SetUpdateBy(updatedBy);
@@ -102,7 +123,7 @@ public class Permission : Infrastructure.Entities.Permissions
         return this;
     }
     
-    public async Task<Permission> ChangeDescription(Guid id, Guid updatedBy, string title, string description)
+    public async Task<OnePermissionRepository> ChangeDescription(Guid id, Guid updatedBy, string title, string description)
     {
         
         this.Description = description;

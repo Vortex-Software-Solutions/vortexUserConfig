@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="UsersConfig\Infrastructure\Common\" />
     <Folder Include="UsersConfig\Presentation\Errors\" />
     <Folder Include="UsersConfig\Presentation\Services\" />
   </ItemGroup>

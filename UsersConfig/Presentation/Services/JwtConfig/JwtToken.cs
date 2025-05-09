@@ -16,7 +16,7 @@ public class JwtToken
         _config = config;
     }
     
-    public string GenerateToken(User user)
+    public string GenerateToken(OneUserRepository oneUserRepository)
     {
         var key = Encoding.UTF8.GetBytes(_config.GetSection("Authentication:Key").Value!);
         var securityKey = new SymmetricSecurityKey(key);
@@ -24,10 +24,10 @@ public class JwtToken
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role!.Name),
-            new Claim("roleId", user.Role.Id.ToString()),
-            new Claim("id", user.Id.ToString())
+            new Claim(ClaimTypes.Email, oneUserRepository.Email),
+            new Claim(ClaimTypes.Role, oneUserRepository.Role!.Name),
+            new Claim("roleId", oneUserRepository.Role.Id.ToString()),
+            new Claim("id", oneUserRepository.Id.ToString())
         };
         
         var token = new JwtSecurityToken(

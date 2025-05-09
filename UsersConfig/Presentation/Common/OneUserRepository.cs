@@ -3,13 +3,12 @@ using System.Net.Mail;
 using Microsoft.EntityFrameworkCore;
 using vortexUserConfig.UsersConfig.Infrastructure;
 using vortexUserConfig.UsersConfig.Infrastructure.Entities;
-using vortexUserConfig.UsersConfig.Presentation.Common.ValidatePermissions;
 using vortexUserConfig.UsersConfig.Presentation.Services.Authentication;
 using vortexUserConfig.UsersConfig.Presentation.Services.JwtConfig;
 
 namespace vortexUserConfig.UsersConfig.Presentation.Common;
 
-public class User : Infrastructure.Entities.Users
+public class OneUserRepository : Infrastructure.Entities.Users
 {
     // Variables for the constructor 
     private readonly JwtToken _jwtToken; 
@@ -17,7 +16,7 @@ public class User : Infrastructure.Entities.Users
     private readonly UserConfigDbContext _userDbContext;
 
     //
-    // User class is a heredit this atributes from the UserEntity
+    // OneUserRepository class is a heredit this atributes from the UserEntity
     //
     // public Guid Id = Guid.NewGuid();
     // public string Name;
@@ -29,7 +28,7 @@ public class User : Infrastructure.Entities.Users
     // public Roles? Roles;
 
     //Made to create base user that contains the basic information
-    public User(
+    public OneUserRepository(
         JwtToken jwtToken,
         UserConfigDbContext userDbContext)
     {
@@ -41,7 +40,7 @@ public class User : Infrastructure.Entities.Users
     //Private method use for the init of a new user
     private void InitUser(
         string name, string lastName, string userName,
-        string email, string password, Guid? roleId, Roles? role
+        string email, string password, Guid? roleId
     )
     {
         this.Name = name;
@@ -50,7 +49,6 @@ public class User : Infrastructure.Entities.Users
         this.Email = email;
         this.Password = password;
         this.RoleId = roleId;
-        this.Role = role;
     }
     
     //Private method use for the init of a user get from the database
@@ -76,9 +74,9 @@ public class User : Infrastructure.Entities.Users
     }
 
     //Method to create a new user
-    public async Task<User> Create(
+    public async Task<OneUserRepository> Create(
         string name, string lastName, string userName,
-        string email, string password, Guid? roleId, Roles? role
+        string email, string password, Guid? roleId
     )
     {
         if (! (MailAddress.TryCreate(email, out var mailAddress)))
@@ -87,7 +85,7 @@ public class User : Infrastructure.Entities.Users
         }
 
         //To create the user 
-        InitUser(name, lastName, userName, email, password, roleId, role);
+        InitUser(name, lastName, userName, email, password, roleId);
         
         //Save the user
         _userDbContext.Users.Add(this);
@@ -102,7 +100,7 @@ public class User : Infrastructure.Entities.Users
         
         if(user == null)
         {
-            return  "User not found";
+            return  "OneUserRepository not found";
         }
         
         InitUser(
@@ -110,10 +108,10 @@ public class User : Infrastructure.Entities.Users
             user.Email, user.Password, user.RoleId, user.Role!
         );
         
-        return "User " + GetFullName() + " found and loaded ";
+        return "OneUserRepository " + GetFullName() + " found and loaded ";
     }
     
-    public async Task<User> FindBySpecification(Expression<Func<Users, bool>> spec)
+    public async Task<OneUserRepository> FindBySpecification(Expression<Func<Users, bool>> spec)
     {
         IQueryable<Users> query = _userDbContext.Users.Where(spec);
 

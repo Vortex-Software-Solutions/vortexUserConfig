@@ -1,8 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using vortexUserConfig.UsersConfig.Infrastructure.Entities;
-using vortexUserConfig.UsersConfig.Presentation.Common;
-
 namespace vortexUserConfig.UsersConfig.Infrastructure;
 
 public class UserConfigDbContext: DbContext
@@ -22,14 +20,38 @@ public class UserConfigDbContext: DbContext
         modelBuilder.Entity<Users>()
             .HasKey(p => p.Id);
         
+        modelBuilder.Entity<Users>()
+            .HasOne(p => p.Role);
+        modelBuilder.Entity<Users>()
+            .HasOne(p => p.Role)
+            .WithMany()
+            .HasForeignKey(p => p.RoleId);
+
         modelBuilder.Entity<Roles>().HasKey(p => p.Id);
-        
+
+        modelBuilder.Entity<Roles>()
+            .HasMany(e => e.Permissions)
+            .WithMany(e => e.Roles)
+            .UsingEntity<RolePermissions>(
+                l => l.HasOne<Permissions>().WithMany().HasForeignKey(e => e.PermissionId),
+                r => r.HasOne<Roles>().WithMany().HasForeignKey(e => e.RoleId)
+            ); 
+
         modelBuilder.Entity<Permissions>().HasKey(p => p.Id);
+        
+        modelBuilder.Entity<Permissions>()
+            .HasMany(e => e.Roles)
+            .WithMany(e => e.Permissions)
+            .UsingEntity<RolePermissions>(
+                l => l.HasOne<Roles>().WithMany().HasForeignKey(e => e.RoleId),
+                r => r.HasOne<Permissions>().WithMany().HasForeignKey(e => e.PermissionId)
+            ); 
         
         modelBuilder.Entity<RolePermissions>().HasKey(p => p.Id);
         
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+ 
     }
 
 }

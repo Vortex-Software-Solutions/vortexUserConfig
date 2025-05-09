@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using vortexUserConfig.UsersConfig.Infrastructure;
@@ -12,9 +13,11 @@ using vortexUserConfig.UsersConfig.Infrastructure;
 namespace vortexUserConfig.Migrations
 {
     [DbContext(typeof(UserConfigDbContext))]
-    partial class UserConfigDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250123171733_AddRelations")]
+    partial class AddRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,11 +180,11 @@ namespace vortexUserConfig.Migrations
 
             modelBuilder.Entity("vortexUserConfig.UsersConfig.Infrastructure.Entities.Users", b =>
                 {
-                    b.HasOne("vortexUserConfig.UsersConfig.Infrastructure.Entities.Roles", "OneRoleRepository")
+                    b.HasOne("vortexUserConfig.UsersConfig.Infrastructure.Entities.Roles", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId");
 
-                    b.Navigation("OneRoleRepository");
+                    b.Navigation("Role");
                 });
 #pragma warning restore 612, 618
         }

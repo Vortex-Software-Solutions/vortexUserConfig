@@ -1,10 +1,11 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using vortexUserConfig.UsersConfig.Infrastructure;
 using vortexUserConfig.UsersConfig.Infrastructure.Entities;
 
 namespace vortexUserConfig.UsersConfig.Presentation.Common.ValidatePermissions;
 
-public class Role : Infrastructure.Entities.Roles
+public class OneRoleRepository : Infrastructure.Entities.Roles
 {
     //Data for the constructor
     private readonly UserConfigDbContext _context;
@@ -15,7 +16,7 @@ public class Role : Infrastructure.Entities.Roles
     // public Guid Id = Guid.NewGuid();
     // public string Name = "";
     // public List<Guid> PermissionId = [];
-    // public List<Permission> Permissions = [];
+    // public List<OnePermissionRepository> Permissions = [];
     // public Guid CreatedBy;
     // public DateTime CreatedAt = DateTime.Now;
     // public Guid? UpdatedBy = null;
@@ -25,13 +26,13 @@ public class Role : Infrastructure.Entities.Roles
     // public bool IsDeleted = false;
 
     //Constructor para que se use con permisos
-    public Role(UserConfigDbContext context)
+    public OneRoleRepository(UserConfigDbContext context)
     {
         _context = context;
     }
 
     //Private method for the init of the permission when it is first created
-    private void InitPermission(Guid createdBy, string name, List<Permissions> permissions)
+    private void InitRole(Guid createdBy, string name, List<Permissions> permissions)
     {
         this.CreatedBy = createdBy;
         this.Name = name;
@@ -39,7 +40,7 @@ public class Role : Infrastructure.Entities.Roles
     }
 
     //Private method for the init of the permission when it is pull from the database
-    private void InitPermission(
+    private void InitRole(
         Guid id, string name, List<Permissions> permissions,
         Guid createdBy, DateTime createdAt, Guid? updatedBy,
         DateTime? updatedAt, bool isDisable, Guid? deletedBy, bool isDeleted)
@@ -68,24 +69,24 @@ public class Role : Infrastructure.Entities.Roles
         this.UpdatedAt = DateTime.Now;
     }
 
-    public async Task<Role> Create(Guid createdBy, string name, List<Permissions> permissions)
+    public async Task<OneRoleRepository> Create(Guid createdBy, string name, List<Permissions> permissions)
     {
-        InitPermission(createdBy, name, permissions);
+        InitRole(createdBy, name, permissions);
         _context.Roles.Add(this);
         await _context.SaveChangesAsync();
         return this;
     }
 
-    public async Task<Role> GetById(Guid id)
+    public async Task<OneRoleRepository> GetById(Guid id)
     {
         var role = await _context.Roles.FirstOrDefaultAsync(r => r.Id == id);
 
         if (role == null)
         {
-            return new Role(_context) ;
+            return new OneRoleRepository(_context) ;
         }
 
-        InitPermission(
+        InitRole(
             role.Id, role.Name, role.Permissions,
             role.CreatedBy, role.CreatedAt, role.UpdatedBy,
             role.UpdatedAt, role.IsDisable, role.DeletedBy, role.IsDeleted
@@ -94,7 +95,26 @@ public class Role : Infrastructure.Entities.Roles
         return this;
     }
     
-    public async Task<Role> ChangeName(Guid updatedBy, string name)
+    public async Task<OneRoleRepository> FindBySpecification(Expression<Func<Roles, bool>> spec)
+    {
+        IQueryable<Roles> query = _context.Roles.Where(spec);
+
+        var role = await query.FirstOrDefaultAsync();
+        
+        if( role is not null )
+        {        
+            InitRole(
+                role.Id, role.Name, role.Permissions,
+                role.CreatedBy, role.CreatedAt, role.UpdatedBy,
+                role.UpdatedAt, role.IsDisable, role.DeletedBy, role.IsDeleted
+            );
+        } 
+        
+        return this;
+    }
+
+    
+    public async Task<OneRoleRepository> ChangeName(Guid updatedBy, string name)
     {
         this.Name = name;
         SetUpdateBy(updatedBy);
@@ -102,7 +122,7 @@ public class Role : Infrastructure.Entities.Roles
         return this;
     }
     
-    public async Task<Role> ChangePermissions(Guid updatedBy, List<Guid> permissionsId)
+    public async Task<OneRoleRepository> ChangePermissions(Guid updatedBy, List<Guid> permissionsId)
     {
         this.PermissionId = permissionsId;
         SetUpdateBy(updatedBy);
@@ -110,7 +130,7 @@ public class Role : Infrastructure.Entities.Roles
         return this;
     } 
     
-    public async Task<Role> Disable(Guid updatedBy)
+    public async Task<OneRoleRepository> Disable(Guid updatedBy)
     {
         this.IsDisable = true;
         SetUpdateBy(updatedBy);

@@ -1,9 +1,11 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using vortexUserConfig.UsersConfig.Presentation.Common;
+using vortexUserConfig.UsersConfig.Presentation.Common.ListQuery;
+using vortexUserConfig.UsersConfig.Presentation.Common.ValidatePermissions;
 using vortexUserConfig.UsersConfig.Presentation.Services.JwtConfig;
 
 
@@ -18,6 +20,14 @@ public static class ServiceContainer
         {
             services.AddScoped<JwtToken>();
         }
+
+        services.AddScoped<ListUsersRepository>();
+        services.AddScoped<ListRolesRepository>();
+        services.AddScoped<ListPermissionRepository>();
+        
+        services.AddScoped<OneUserRepository>();  
+        services.AddScoped<OneRoleRepository>();
+        services.AddScoped<OnePermissionRepository>();
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer("Bearer", options =>
